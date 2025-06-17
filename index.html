@@ -4,7 +4,375 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Front Modern - Luxury Vacation Rental</title>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .page {
+            display: none;
+            min-height: 100vh;
+            animation: fadeIn 0.8s ease-in-out;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-100px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(26, 32, 46, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #fff;
+            text-decoration: none;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        .nav-links a.active {
+            color: #667eea;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after,
+        .nav-links a.active::after {
+            width: 100%;
+        }
+
+        .hero {
+            height: 100vh;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.8), rgba(118, 75, 162, 0.8)),
+                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800"><rect fill="%23667eea" width="1200" height="800"/><path fill="%23764ba2" d="M0 400L50 420C100 440 200 480 300 500C400 520 500 520 600 500C700 480 800 440 900 420C1000 400 1100 400 1150 400L1200 400V800H1150C1100 800 1000 800 900 800C800 800 700 800 600 800C500 800 400 800 300 800C200 800 100 800 50 800H0V400Z"/></svg>') center/cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            position: relative;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            padding: 2rem;
+            animation: slideIn 1s ease-out;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .cta-button {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 1rem 2.5rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.3);
+            background: linear-gradient(135deg, #ee5a24, #ff6b6b);
+        }
+
+        .section {
+            padding: 5rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+        }
+
+        .card-image {
+            height: 200px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-image::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+        }
+
+        .card-content {
+            padding: 2rem;
+        }
+
+        .card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        .property-details {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        .amenities {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .amenity {
+            background: rgba(255,255,255,0.1);
+            padding: 2rem;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .amenity:hover {
+            background: rgba(255,255,255,0.2);
+            transform: scale(1.05);
+        }
+
+        .booking-form {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 20px;
+            padding: 3rem;
+            margin: 2rem 0;
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            background: rgba(255,255,255,0.9);
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            background: white;
+            transform: scale(1.02);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .contact-info {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 3rem;
+            border-radius: 20px;
+            margin: 2rem 0;
+        }
+
+        .mobile-menu {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: rgba(26, 32, 46, 0.95);
+                flex-direction: column;
+                padding: 2rem;
+                backdrop-filter: blur(10px);
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .mobile-menu {
+                display: block;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .floating-elements {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .floating-element {
+            position: absolute;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .floating-element:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .floating-element:nth-child(2) {
+            width: 120px;
+            height: 120px;
+            left: 80%;
+            animation-delay: 2s;
+        }
+
+        .floating-element:nth-child(3) {
+            width: 60px;
+            height: 60px;
+            left: 60%;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+    </style>
 </head>
 <body>
     <nav class="nav">
@@ -44,31 +412,24 @@
             
             <div class="grid">
                 <div class="card">
-                    <div class="card-image downtown"></div>
+                    <div class="card-image"></div>
                     <div class="card-content">
                         <h3>🏙️ Close to Downtown</h3>
                         <p>Just minutes from the vibrant downtown district. Walk to restaurants, shops, and entertainment venues.</p>
                     </div>
                 </div>
                 <div class="card">
-                    <div class="card-image walkable"></div>
+                    <div class="card-image"></div>
                     <div class="card-content">
                         <h3>🚶 Walkable</h3>
                         <p>Everything you need within walking distance. Explore cafes, parks, and local attractions on foot.</p>
                     </div>
                 </div>
                 <div class="card">
-                    <div class="card-image pool"></div>
+                    <div class="card-image"></div>
                     <div class="card-content">
-                        <h3>🔥 Outdoor Area with Grill and Cowboy Pool</h3>
+                        <h3>🤠 Cowboy Pool</h3>
                         <p>Relax in our unique cowboy-themed pool area. A fun twist on traditional swimming with western charm.</p>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-image family-party"></div>
-                    <div class="card-content">
-                        <h3>🎉 Family Friendly & Perfect for Parties</h3>
-                        <p>Family friendly and perfect to host an intimate classy party. Spacious layout and elegant design create the ideal atmosphere.</p>
                     </div>
                 </div>
             </div>
@@ -85,33 +446,33 @@
         </section>
 
         <section class="section">
-            <div class="gallery-grid">
-                <div class="gallery-item">
-                    <div class="gallery-placeholder">Living Room</div>
+            <div class="gallery-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+                <div class="gallery-item" style="position: relative; height: 250px; border-radius: 15px; overflow: hidden; cursor: pointer; transition: all 0.3s ease;">
+                    <div style="height: 100%; background: linear-gradient(135deg, #667eea, #764ba2); display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2rem; font-weight: bold;">Living Room</div>
                 </div>
-                <div class="gallery-item">
-                    <div class="gallery-placeholder">Master Bedroom</div>
+                <div class="gallery-item" style="position: relative; height: 250px; border-radius: 15px; overflow: hidden; cursor: pointer; transition: all 0.3s ease;">
+                    <div style="height: 100%; background: linear-gradient(135deg, #f093fb, #f5576c); display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2rem; font-weight: bold;">Master Bedroom</div>
                 </div>
-                <div class="gallery-item">
-                    <div class="gallery-placeholder">Cowboy Pool</div>
+                <div class="gallery-item" style="position: relative; height: 250px; border-radius: 15px; overflow: hidden; cursor: pointer; transition: all 0.3s ease;">
+                    <div style="height: 100%; background: linear-gradient(135deg, #4facfe, #00f2fe); display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2rem; font-weight: bold;">Cowboy Pool</div>
                 </div>
-                <div class="gallery-item">
-                    <div class="gallery-placeholder">Kitchen</div>
+                <div class="gallery-item" style="position: relative; height: 250px; border-radius: 15px; overflow: hidden; cursor: pointer; transition: all 0.3s ease;">
+                    <div style="height: 100%; background: linear-gradient(135deg, #a8edea, #fed6e3); display: flex; align-items: center; justify-content: center; color: #333; font-size: 1.2rem; font-weight: bold;">Kitchen</div>
                 </div>
-                <div class="gallery-item">
-                    <div class="gallery-placeholder">Dining Area</div>
+                <div class="gallery-item" style="position: relative; height: 250px; border-radius: 15px; overflow: hidden; cursor: pointer; transition: all 0.3s ease;">
+                    <div style="height: 100%; background: linear-gradient(135deg, #ffecd2, #fcb69f); display: flex; align-items: center; justify-content: center; color: #333; font-size: 1.2rem; font-weight: bold;">Dining Area</div>
                 </div>
-                <div class="gallery-item">
-                    <div class="gallery-placeholder">Guest Bedroom</div>
+                <div class="gallery-item" style="position: relative; height: 250px; border-radius: 15px; overflow: hidden; cursor: pointer; transition: all 0.3s ease;">
+                    <div style="height: 100%; background: linear-gradient(135deg, #a1c4fd, #c2e9fb); display: flex; align-items: center; justify-content: center; color: #333; font-size: 1.2rem; font-weight: bold;">Guest Bedroom</div>
                 </div>
-                <div class="gallery-item">
-                    <div class="gallery-placeholder">Bathroom</div>
+                <div class="gallery-item" style="position: relative; height: 250px; border-radius: 15px; overflow: hidden; cursor: pointer; transition: all 0.3s ease;">
+                    <div style="height: 100%; background: linear-gradient(135deg, #667eea, #764ba2); display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2rem; font-weight: bold;">Bathroom</div>
                 </div>
-                <div class="gallery-item">
-                    <div class="gallery-placeholder">Downtown View</div>
+                <div class="gallery-item" style="position: relative; height: 250px; border-radius: 15px; overflow: hidden; cursor: pointer; transition: all 0.3s ease;">
+                    <div style="height: 100%; background: linear-gradient(135deg, #f093fb, #f5576c); display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2rem; font-weight: bold;">Downtown View</div>
                 </div>
-                <div class="gallery-item">
-                    <div class="gallery-placeholder">Outdoor Space</div>
+                <div class="gallery-item" style="position: relative; height: 250px; border-radius: 15px; overflow: hidden; cursor: pointer; transition: all 0.3s ease;">
+                    <div style="height: 100%; background: linear-gradient(135deg, #4facfe, #00f2fe); display: flex; align-items: center; justify-color: white; font-size: 1.2rem; font-weight: bold;">Outdoor Space</div>
                 </div>
             </div>
         </section>
@@ -198,42 +559,42 @@
             </div>
 
             <div class="grid">
-                <div class="card review-card-1">
+                <div class="card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
                     <div class="card-content">
                         <div style="font-size: 1.5rem; margin-bottom: 1rem;">★★★★★</div>
                         <p style="font-style: italic; margin-bottom: 1rem;">"The Front Modern exceeded all our expectations! The cowboy pool was such a unique touch, and the downtown location was perfect for exploring on foot. Highly recommend!"</p>
                         <p><strong>- Sarah M.</strong> • March 2025</p>
                     </div>
                 </div>
-                <div class="card review-card-2">
+                <div class="card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
                     <div class="card-content">
                         <div style="font-size: 1.5rem; margin-bottom: 1rem;">★★★★★</div>
                         <p style="font-style: italic; margin-bottom: 1rem;">"Absolutely stunning property! The modern amenities combined with the western pool theme created such a fun atmosphere. Walking distance to everything we needed."</p>
                         <p><strong>- Mike & Jennifer T.</strong> • February 2025</p>
                     </div>
                 </div>
-                <div class="card review-card-3">
+                <div class="card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;">
                     <div class="card-content">
                         <div style="font-size: 1.5rem; margin-bottom: 1rem;">★★★★★</div>
                         <p style="font-style: italic; margin-bottom: 1rem;">"Perfect for our family vacation. The kids loved the cowboy pool, and we loved being able to walk to restaurants and shops. Clean, modern, and beautifully decorated."</p>
                         <p><strong>- The Rodriguez Family</strong> • January 2025</p>
                     </div>
                 </div>
-                <div class="card review-card-4">
+                <div class="card" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); color: #333;">
                     <div class="card-content">
                         <div style="font-size: 1.5rem; margin-bottom: 1rem; color: #667eea;">★★★★★</div>
                         <p style="font-style: italic; margin-bottom: 1rem;">"The location can't be beat! We walked everywhere - coffee shops, restaurants, shopping. The property itself is gorgeous and the host was incredibly responsive."</p>
                         <p><strong>- David L.</strong> • December 2024</p>
                     </div>
                 </div>
-                <div class="card review-card-5">
+                <div class="card" style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); color: #333;">
                     <div class="card-content">
                         <div style="font-size: 1.5rem; margin-bottom: 1rem; color: #667eea;">★★★★★</div>
                         <p style="font-style: italic; margin-bottom: 1rem;">"Business trip turned into a mini-vacation thanks to this amazing property. The workspace was perfect, and I loved unwinding in the cowboy pool after long days."</p>
                         <p><strong>- Amanda K.</strong> • November 2024</p>
                     </div>
                 </div>
-                <div class="card review-card-6">
+                <div class="card" style="background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%); color: #333;">
                     <div class="card-content">
                         <div style="font-size: 1.5rem; margin-bottom: 1rem; color: #667eea;">★★★★★</div>
                         <p style="font-style: italic; margin-bottom: 1rem;">"Such a unique property! The modern design with cowboy touches was so charming. Great downtown views and walking distance to everything. Will definitely book again!"</p>
@@ -242,14 +603,14 @@
                 </div>
             </div>
 
-            <div class="review-tags">
-                <h3>What guests love most:</h3>
-                <div class="tags-container">
-                    <span class="tag tag-1">Walkable Location</span>
-                    <span class="tag tag-2">Cowboy Pool</span>
-                    <span class="tag tag-3">Downtown Views</span>
-                    <span class="tag tag-4">Modern Amenities</span>
-                    <span class="tag tag-5">Responsive Host</span>
+            <div style="text-align: center; margin-top: 3rem;">
+                <h3 style="font-size: 1.8rem; margin-bottom: 1rem;">What guests love most:</h3>
+                <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem;">
+                    <span style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 0.5rem 1rem; border-radius: 25px;">Walkable Location</span>
+                    <span style="background: linear-gradient(135deg, #f093fb, #f5576c); color: white; padding: 0.5rem 1rem; border-radius: 25px;">Cowboy Pool</span>
+                    <span style="background: linear-gradient(135deg, #4facfe, #00f2fe); color: white; padding: 0.5rem 1rem; border-radius: 25px;">Downtown Views</span>
+                    <span style="background: linear-gradient(135deg, #a8edea, #fed6e3); color: #333; padding: 0.5rem 1rem; border-radius: 25px;">Modern Amenities</span>
+                    <span style="background: linear-gradient(135deg, #ffecd2, #fcb69f); color: #333; padding: 0.5rem 1rem; border-radius: 25px;">Responsive Host</span>
                 </div>
             </div>
         </section>
@@ -453,6 +814,64 @@
         </section>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        function showPage(pageName) {
+            // Hide all pages
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(page => page.classList.remove('active'));
+            
+            // Show selected page
+            document.getElementById(pageName).classList.add('active');
+            
+            // Update nav links
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => link.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Close mobile menu if open
+            document.getElementById('navLinks').classList.remove('active');
+            
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+
+        function toggleMobileMenu() {
+            const navLinks = document.getElementById('navLinks');
+            navLinks.classList.toggle('active');
+        }
+
+        // Form submissions
+        document.getElementById('bookingForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Thank you for your reservation request! We will contact you within 24 hours to confirm your booking.');
+        });
+
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Thank you for your message! We will get back to you soon.');
+        });
+
+        // Add smooth scrolling and dynamic effects
+        window.addEventListener('scroll', function() {
+            const nav = document.querySelector('.nav');
+            if (window.scrollY > 50) {
+                nav.style.background = 'rgba(26, 32, 46, 0.98)';
+            } else {
+                nav.style.background = 'rgba(26, 32, 46, 0.95)';
+            }
+        });
+
+        // Set minimum date to today for booking form
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('checkin').min = today;
+        document.getElementById('checkout').min = today;
+
+        // Auto-update checkout date when checkin changes
+        document.getElementById('checkin').addEventListener('change', function() {
+            const checkinDate = new Date(this.value);
+            checkinDate.setDate(checkinDate.getDate() + 1);
+            document.getElementById('checkout').min = checkinDate.toISOString().split('T')[0];
+        });
+    </script>
 </body>
 </html>
